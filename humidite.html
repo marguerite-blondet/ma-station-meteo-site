@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'humidité - Station météo</title>
+    <style>
+        /* --- Styles Généraux --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- En-tête (Header) --- */
+        header {
+            background: linear-gradient(135deg, #4a90e2, #50e3c2);
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+
+        /* --- Conteneur Principal --- */
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        /* --- Section Contenu --- */
+        .content-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* --- Style du Graphique (Iframe adaptée) --- */
+        .graph-container {
+            width: 100%;             /* Occupe toute la largeur du bloc blanc */
+            height: 450px;           /* Hauteur fixe idéale pour ce type de graphique Node-RED */
+            border: none;            /* Supprime la bordure par défaut de l'iframe */
+            border-radius: 8px;      /* Légère courbure pour s'intégrer au design */
+            background-color: #f8fafc; /* Fond neutre pendant le chargement */
+            display: block;
+        }
+
+        /* Ajustement optionnel : si vous préférez un affichage basé sur les proportions de l'écran */
+        @media (max-width: 600px) {
+            .graph-container {
+                height: 300px;       /* Plus petit sur les téléphones pour éviter de trop scroller */
+            }
+        }
+
+        /* --- Style de la liste de données --- */
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0 0 0;
+        }
+
+        li {
+            background-color: #f8fafc;
+            border-left: 4px solid #4a90e2;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 10px 10px 0;
+            color: #34495e;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* --- Bouton Retour --- */
+        .btn-back {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-back:hover {
+            background-color: #1a252f;
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Votre capteur d'humidité</h1>
+    </header>
+
+    <div class="container">
+        
+        <div class="content-section">
+            <h2>Présentation</h2>
+            <p>Ce capteur enregistre le pourcentage d'humidité présent dans l'air.</p>
+            
+            <h2>Données du capteur</h2>
+            <ul id="liste-historique">
+                <li>Chargement des données en cours...</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Évolution en direct</h2>
+            <iframe class="graph-container" src="https://station-meteo1.onrender.com/ui/#!/0?view=fullscreen"></iframe>
+        </div>
+
+        <a href="page.html" class="btn-back">← Retour à l'accueil</a>
+
+    </div>
+
+    <script>
+        const URL_HISTORIQUE = "https://station-meteo1.onrender.com/api/meteo/historique/humidite"; 
+
+        function chargerHistorique() {
+            fetch(URL_HISTORIQUE)
+                .then(reponse => {
+                    if (!reponse.ok) throw new Error("Erreur serveur");
+                    return reponse.json();
+                })
+                .then(donnees => {
+                    const liste = document.getElementById("liste-historique");
+                    liste.innerHTML = ""; 
+
+                    donnees.forEach(mesure => {
+                        let li = document.createElement("li");
+                        //let dateAffichage = mesure.date || mesure.timestamp || "Date inconnue";
+                        let valeurAffichage = mesure.valeur !== undefined ? mesure.valeur : (mesure.value || mesure.humidite);
+                        
+                        li.textContent = `Le ${dateAffichage} : ${valeurAffichage} %`;
+                        liste.appendChild(li);
+                    });
+                })
+                .catch(erreur => {
+                    console.error("Erreur :", erreur);
+                    const liste = document.getElementById("liste-historique");
+                    if (liste) {
+                        liste.innerHTML = "<li style='border-color: #ff7675;'>Impossible de charger les données. Vérifiez la connexion avec le serveur.</li>";
+                    }
+                });
+        }
+
+        chargerHistorique();
+    </script>
+
+</body>
+</html>

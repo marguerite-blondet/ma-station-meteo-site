@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteo Xplorer</title>
+    <style>
+        /* --- Styles Généraux --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Dégradé sur toute la page, fixé pour ne pas s'étirer au scroll */
+            background: linear-gradient(135deg, #3a7bd5, #3a6073, #50e3c2);
+            background-attachment: fixed;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- En-tête (Header) --- */
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 50px 20px 20px 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin: 0 0 25px 0;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+        }
+
+        /* Style de l'image de fond/illustration */
+        .weather-img {
+            max-width: 140px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- Section Principale --- */
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 10px auto 50px auto;
+            padding: 10px;
+        }
+
+        /* --- Titres des sections --- */
+        h2 {
+            color: #ffffff;
+            font-size: 1.6rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        p {
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin: 0;
+            text-align: justify;
+        }
+
+        /* --- Style "Glassmorphism" pour les blocs de contenu --- */
+        .intro-section {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+
+        /* Petit séparateur subtil entre les deux paragraphes de l'intro */
+        .intro-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 25px 0;
+        }
+
+        /* --- Grille des Capteurs/Données --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        /* Style des "Cartes" transparentes */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Style des boutons (liens) */
+        .btn-link {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #2c3e50;
+            text-decoration: none;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-link:hover {
+            background-color: #50e3c2;
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(80, 227, 194, 0.4);
+            transform: scale(1.05);
+        }
+
+        .valeur-capteur {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #50e3c2; /* Vert turquoise brillant */
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        /* Style spécifique réduit pour l'affichage brut des coordonnées GPS */
+        .valeur-capteur.gps-text {
+            font-size: 1.1rem;
+            word-break: break-all;
+        }
+
+        .sensors-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .sensor-card {
+            flex: 0 1 calc(33.333% - 20px);
+            min-width: 240px;
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .sensor-card p {
+            margin: 0 0 10px 0;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .sensor-img {
+            width: 200px;           
+            height: 150px;       
+            object-fit: cover;      
+            border-radius: 8px;      
+            margin-top: 10px;        
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: block;         
+        }
+
+       .logo-site {
+           max-width: 100px;
+           height: auto;
+           margin-top: 30px;
+           margin-bottom: 30px;
+           transform: rotate(45deg);
+       }
+    </style>
+</head>
+<body>
+
+   <header>
+        <h1><strong>Bienvenue sur votre station Meteo Xplorer !</strong></h1>
+       <img src="logo.png" alt="Logo Meteo Xplorer" class="logo-site">
+    </header>
+
+    <div class="container">
+        
+        <section class="intro-section">
+            <p>
+                <strong>Bienvenue sur le tableau de bord de votre station météo robotisée et connectée ! </strong><br> <br>
+                Conçu autour d'un microcontrôleur ESP32, ce projet innovant réinvente la collecte de données environnementales en alliant météorologie et robotique mobile. Embarquée sur une plateforme motorisée, notre station se déplace librement pour effectuer des relevés précis en temps réel dans différents milieux (température, humidité, pression atmosphérique, luminosité), complétés par des mesures de vent et de précipitations. 
+            </p>
+            
+            <div class="intro-divider"></div>
+            
+            <p>
+                <strong>Comment ça fonctionne ? </strong><br> <br>
+                Grâce à sa connectivité 4G/5G, la carte traite et transmet instantanément toutes ces mesures afin de vous proposer un suivi graphique complet et un historique détaillé de chaque expédition. Exploration en haute montagne ou analyse locale : suivez notre robot pas à pas !
+            </p>
+
+            <div class="intro-divider"></div>
+            
+            <p>
+                <strong>Qui en bénéficie ? </strong><br> <br>
+                Au-delà de la simple collecte, notre station a été pensée comme un véritable outil de terrain au service des aventuriers et des scientifiques. Conçue pour garantir leur sécurité, elle permet de garder un œil en direct sur des indicateurs vitaux et de détecter instantanément les risques de ruptures climatiques. Sa force majeure réside dans son format hybride unique et 100 % amovible : le boîtier peut basculer en un clin d'œil d'un mode "robot autonome" idéal pour quadriller les plaines, à un format "boîtier de poche" ultra-léger, taillé pour affronter le relief de la haute montagne. Enfin, parce que l'étude de la nature exige de la respecter, le projet intègre une démarche d'éco-conception rigoureuse où chaque flux de données est optimisé pour offrir une sobriété numérique maximale et une autonomie énergétique prolongée.
+            </p>
+            
+            <div class="intro-divider"></div>
+
+            <p>
+                <strong>Les Capteurs :</strong> <br> <br>
+            </p>
+            
+            <div class="sensors-grid">
+        
+            <div class="sensor-card">
+                <p>La température et l'humidité :<br>(Ref : Kit capteur Arduino 103030375) </p>
+                <img src="temp_humidite.jpeg" alt="Capteur de température et d'humidité" class="sensor-img">
+            </div>
+        
+            <div class="sensor-card">
+                <p>La luminosité : <br>(Ref : VEML7700) </p> <br>
+                <img src="luminosite.jpeg" alt="Capteur de luminosité" class="sensor-img">
+            </div>
+        
+            <div class="sensor-card">
+                <p>La pression : <br>(Ref : Kit capteur Arduino 103030375) </p>
+                <img src="pression.jpeg" alt="Capteur de pression" class="sensor-img">
+            </div>
+        
+            <div class="sensor-card">
+                <p>La vitesse du vent : <br> (Ref : LEXCA003) </p>
+                <img src="vitessevent.png" alt="Capteur de vitesse du vent" class="sensor-img">
+            </div>
+        
+            <div class="sensor-card">
+                <p>L'angle et la direction du vent : <br>(Ref : LEXCA002) </p>
+                <img src="dir_angle.png" alt="Capteur d'angle et de direction du vent" class="sensor-img">
+            </div>
+
+            <div class="sensor-card">
+                <p>La présence de pluie : <br>(Ref : LEX-CAP02) </p>
+                <img src="pluie.png" alt="Capteur de quantité de pluie" class="sensor-img">
+            </div>
+                
+            <div class="sensor-card">
+                <p>Le GPS : <br>(Ref : 109020022) </p>
+                <img src="gps.jpeg" alt="Capteur GPS" class="sensor-img">
+            </div>
+            
+        </section>
+
+        <h2><strong>Vos Mesures en direct</strong></h2>
+        
+        <div class="dashboard-grid">
+            
+            <div class="card">
+                <h3>La température</h3>
+                <p class="valeur-capteur"><span id="valeur-temp">--</span> °C</p>
+                <a href="temp.html" class="btn-link">Voir les détails</a>
+            </div>
+
+            <div class="card">
+                <h3>L'humidité</h3>
+                <p class="valeur-capteur"><span id="valeur-humidite">--</span> %</p>
+                <a href="humidite.html" class="btn-link">Voir les détails</a>
+            </div>
+
+            <div class="card">
+                <h3>La luminosité</h3>
+                <p class="valeur-capteur"><span id="valeur-luminosite">--</span> Lux</p>
+                <a href="luminosite.html" class="btn-link">Voir les détails</a>
+            </div>
+            
+            <div class="card">
+                <h3>La pression</h3>
+                <p class="valeur-capteur"><span id="valeur-pression">--</span> hPa</p>
+                <a href="pression.html" class="btn-link">Voir les détails</a>
+            </div>
+
+            <div class="card">
+                <h3>La vitesse du vent</h3>
+                <p class="valeur-capteur"><span id="valeur-vitesse">--</span> m/s</p>
+                <a href="vitessevent.html" class="btn-link">Voir les détails</a>
+            </div>
+
+            <div class="card">
+                <h3>La direction du vent</h3>
+                <p class="valeur-capteur"><span id="valeur-direction">--</span> </p>
+                <a href="dirvent.html" class="btn-link">Voir les détails</a>
+            </div>
+
+            <div class="card">
+                <h3>L'angle du vent</h3>
+                <p class="valeur-capteur"><span id="valeur-angle">--</span> °</p>
+                <a href="anglevent.html" class="btn-link">Voir les détails</a>
+            </div>
+
+            <div class="card">
+                <h3>La pluie</h3>
+                <p class="valeur-capteur"><span id="valeur-pluie">--</span></p>
+                <a href="pluie.html" class="btn-link">Voir les détails</a>
+            </div>
+
+            <div class="card">
+                <h3>Le GPS</h3>
+                <p class="valeur-capteur gps-text"><span id="valeur-gps">--</span></p>
+                <a href="gps.html" class="btn-link">Voir les détails</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    // Configuration des URLs du serveur 
+    const URLS = {
+        temperature: "https://station-meteo1.onrender.com/api/meteo/historique/temperature",
+        pression: "https://station-meteo1.onrender.com/api/meteo/historique/pression",
+        humidite: "https://station-meteo1.onrender.com/api/meteo/historique/humidite",
+        luminosite: "https://station-meteo1.onrender.com/api/meteo/historique/luminosite",
+        vitesse: "https://station-meteo1.onrender.com/api/meteo/historique/vitesse_m_s",
+        angle: "https://station-meteo1.onrender.com/api/meteo/historique/angleVent",
+        dir: "https://station-meteo1.onrender.com/api/meteo/historique/dirVent",
+        pluie: "https://station-meteo1.onrender.com/api/meteo/historique/pluie_mm",
+        latitude: "https://station-meteo1.onrender.com/api/meteo/historique/latitude",
+        longitude: "https://station-meteo1.onrender.com/api/meteo/historique/lng",
+        altitude: "https://station-meteo1.onrender.com/api/meteo/historique/altitude" 
+    };
+
+    function chargerDonneesMeteo() {
+        const requeteTemp = fetch(URLS.temperature).then(res => res.json());
+        const requetePression = fetch(URLS.pression).then(res => res.json());
+        const requeteHumidite = fetch(URLS.humidite).then(res => res.json());
+        const requeteLuminosite = fetch(URLS.luminosite).then(res => res.json());
+        const requeteVitesse = fetch(URLS.vitesse).then(res => res.json());
+        const requeteAngle = fetch(URLS.angle).then(res => res.json());
+        const requeteDirection = fetch(URLS.dir).then(res => res.json());
+        const requetePluie = fetch(URLS.pluie).then(res => res.json());
+        const requeteLat = fetch(URLS.latitude).then(res => res.json());
+        const requeteLong = fetch(URLS.longitude).then(res => res.json());
+        const requeteAlt = fetch(URLS.altitude).then(res => res.json()); // AJOUTÉ : La requête manquante !
+
+        Promise.all([requeteTemp, requetePression, requeteHumidite, requeteLuminosite, requeteVitesse, requeteAngle, requeteDirection, requetePluie, requeteLat, requeteLong, requeteAlt])
+            .then(([dataTemp, dataPression, dataHumidite, dataLuminosite, dataVitesse, dataAngle, dataDirection, dataPluie, dataLat, dataLong, dataAlt]) => {
+                
+                const extraireDerniereValeur = (tableau) => {
+                    if(!tableau || tableau.length === 0) return "--";
+                    const derniereMesure = tableau[tableau.length - 1];
+                    let valeurBrute = derniereMesure.valeur !== undefined ? derniereMesure.valeur : (derniereMesure.value || derniereMesure.temperature || derniereMesure.pression || derniereMesure.humidite || derniereMesure.luminosite || derniereMesure.vitesse || derniereMesure.angle || derniereMesure.dir || derniereMesure.pluie || derniereMesure.latitude || derniereMesure.longitude || derniereMesure.lng || derniereMesure.alt || derniereMesure.altitude);
+                    return valeurBrute !== undefined ? valeurBrute : "--";    
+                }; // CORRIGÉ : L'accolade fermante manquante est remise ici.
+
+                document.getElementById("valeur-temp").textContent = extraireDerniereValeur(dataTemp);
+                document.getElementById("valeur-pression").textContent = extraireDerniereValeur(dataPression);
+                document.getElementById("valeur-humidite").textContent = extraireDerniereValeur(dataHumidite);
+                document.getElementById("valeur-luminosite").textContent = extraireDerniereValeur(dataLuminosite);
+                document.getElementById("valeur-vitesse").textContent = extraireDerniereValeur(dataVitesse);
+                document.getElementById("valeur-angle").textContent = extraireDerniereValeur(dataAngle);
+                document.getElementById("valeur-direction").textContent = extraireDerniereValeur(dataDirection);
+                document.getElementById("valeur-pluie").textContent = extraireDerniereValeur(dataPluie);
+
+                // Extraction et formatage combiné du GPS (Lat, Lng, Alt)
+                const derniereLat = extraireDerniereValeur(dataLat);
+                const derniereLong = extraireDerniereValeur(dataLong);
+                const derniereAlt = extraireDerniereValeur(dataAlt);
+
+                if (derniereLat !== "--" && derniereLong !== "--") {
+                    // Affichage des trois informations
+                    let txtGps = `${derniereLat}°N, ${derniereLong}°E`;
+                    if (derniereAlt !== "--") {
+                        txtGps += ` (${derniereAlt}m)`;
+                    }
+                    document.getElementById("valeur-gps").textContent = txtGps;
+                } else {
+                    document.getElementById("valeur-gps").textContent = "--";
+                }
+            })
+            .catch(erreur => {
+                console.error("Impossible de récupérer les données en direct :", erreur);
+            });
+    }
+
+    // Premier chargement au lancement
+    chargerDonneesMeteo();
+
+    // Actualisation automatique toutes les 60 secondes
+    setInterval(chargerDonneesMeteo, 60000);
+    </script>
+
+</body>
+</html>

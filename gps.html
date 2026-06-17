@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le GPS - Meteo Xplorer</title>
+    <style>
+        /* --- Styles Généraux --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0; 
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- En-tête (Header) --- */
+        header {
+            background: linear-gradient(135deg, #4a90e2, #50e3c2); 
+            color: white;
+            width: 100%;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+
+        /* --- Section Principale --- */
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .content-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* --- Style du Graphique --- */
+        .graph-container {
+            width: 100%;
+            height: 250px;
+            border: none;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            display: block;
+        }
+
+        /* --- Style de la liste de données --- */
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0 0 0;
+        }
+
+        li {
+            background-color: #f8fafc;
+            border-left: 4px solid #4a90e2;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 10px 10px 0;
+            color: #34495e;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* --- Bouton Retour --- */
+        .btn-back {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-back:hover {
+            background-color: #1a252f;
+            transform: translateX(-3px);
+        }
+
+        /* --- Affichage Logo --- */
+        .logo-site {
+            max-width: 70px;
+            height: auto;
+            margin-right: 40px;
+            margin-left: 10px;
+            transform: rotate(45deg); /* L'orientation initiale de l'image n'est pas "droite" */
+        }
+
+        /* --- Adaptation pour écran de téléphone --- */
+        @media (max-width: 600px) {
+            .graph-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="logo.png" alt="Logo" class="logo-site">
+        <h1>Votre capteur GPS</h1>
+    </header>
+
+    <div class="container">
+
+        <div class="content-section">
+            <h2>Données du capteur (Coordonnées)</h2>
+            <ul id="liste-historique">
+                <li>Chargement des coordonnées en cours...</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Évolution en direct</h2>
+            <div class="graphs-grid">
+                <iframe class="graph-container" src="https://station-meteo1.onrender.com/ui/#!/8?view=fullscreen"></iframe>
+                <iframe class="graph-container" src="https://station-meteo1.onrender.com/ui/#!/9?view=fullscreen"></iframe>
+                <iframe class="graph-container" src="https://station-meteo1.onrender.com/ui/#!/10?view=fullscreen"></iframe>
+            </div>
+        </div>
+
+        <a href="index.html" class="btn-back">← Retour à l'accueil</a>
+
+    </div>
+
+   <script>
+    // URLs des 3 APIs de géolocalisation
+    const URL_LNG = "https://station-meteo1.onrender.com/api/meteo/historique/lng";
+    const URL_LAT = "https://station-meteo1.onrender.com/api/meteo/historique/latitude";
+    const URL_ALT = "https://station-meteo1.onrender.com/api/meteo/historique/altitude";
+
+    async function chargerHistorique() {
+        const liste = document.getElementById("liste-historique");
+        
+        try {
+            // Récupère les 3 flux de données en parallèle pour gagner du temps
+            const [repLng, repLat, repAlt] = await Promise.all([
+                fetch(URL_LNG),
+                fetch(URL_LAT),
+                fetch(URL_ALT)
+            ]);
+            
+            if (!repLng.ok || !repLat.ok || !repAlt.ok) {
+                throw new Error("Erreur serveur sur l'une des APIs");
+            }
+
+            const [dataLng, dataLat, dataAlt] = await Promise.all([
+                repLng.json(),
+                repLat.json(),
+                repAlt.json()
+            ]); 
+
+            liste.innerHTML = ""; 
+
+            // Vérification si au moins une des listes est vide
+            if (!dataLng.length || !dataLat.length || !dataAlt.length) {
+                liste.innerHTML = "<li>Données GPS incomplètes pour le moment.</li>";
+                return;
+            }
+
+            // Récupère les 5 derniers index en partant de la fin (les plus récents)
+            const tailleMin = Math.min(dataLng.length, dataLat.length, dataAlt.length);
+            const limite Relevés = 5;
+            
+            // On boucle à l'envers pour afficher le plus récent en premier
+            for (let i = 1; i <= Math.min(tailleMin, limiteRelevés); i++) {
+                const mesLng = dataLng[dataLng.length - i];
+                const mesLat = dataLat[dataLat.length - i];
+                const mesAlt = dataAlt[dataAlt.length - i];
+
+                // Extraction de la date (basée sur le relevé de longitude)
+                let dateRaw = mesLng.date || mesLng.timestamp || mesLng.createdAt;
+                let dateAffichage = "Date inconnue";
+
+                if (dateRaw) {
+                    const d = new Date(dateRaw);
+                    dateAffichage = d.toLocaleDateString('fr-FR') + " à " + d.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+                }
+                
+                // Extraction sécurisée des valeurs
+                let lng = mesLng.valeur !== undefined ? mesLng.valeur : (mesLng.value || 0);
+                let lat = mesLat.valeur !== undefined ? mesLat.valeur : (mesLat.value || 0);
+                let alt = mesAlt.valeur !== undefined ? mesAlt.valeur : (mesAlt.value || 0);
+
+                // Injection d'une ligne unique regroupant les 3 données
+                let li = document.createElement("li"); 
+                li.innerHTML = `📍 <strong>Lat :</strong> ${lat} | <strong>Lng :</strong> ${lng} | <strong>Alt :</strong> ${alt} m — Relevé le ${dateAffichage}`;
+                liste.appendChild(li);
+            }
+
+        } catch (erreur) {
+            console.error("Erreur de récupération GPS :", erreur);
+            if (liste) {
+                liste.innerHTML = "<li style='border-color: #ff7675;'>Impossible de charger l'historique GPS. Vérifiez la connexion.</li>";
+            }
+        }
+    }
+
+    // Chargement initial immédiat
+    chargerHistorique();
+
+    // Rafraîchissement automatique toutes les 60 secondes
+    setInterval(chargerHistorique, 60000);
+</script>
+
+</body>
+</html>

@@ -5,7 +5,7 @@ Autheur -- Marguerite BLONDET
 Projet  -- D2iP02 : Habib TALL, Jawaher TALL, Rémi TESSE, Clémentine TRANNOY, William SOUCHARD, Marguerite BLONDET  
   
   
-Bienvenue sur l'interface web da la station météo connectée et mobile (Meteo Xplorer).   
+Bienvenue sur l'interface web de la station météo connectée et mobile (Meteo Xplorer).   
   
   
 -- Technologies utilisées  

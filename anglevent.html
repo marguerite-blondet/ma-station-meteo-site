@@ -141,7 +141,7 @@
 
     <script>
         // URL de l'API Node-RED / Backend qui stocke l'historique
-        const URL_HISTORIQUE = ":https://station-meteo1.onrender.com/api/meteo/historique/angleVent"; 
+        const URL_HISTORIQUE = "https://station-meteo1.onrender.com/api/meteo/historique/angleVent"; 
 
         // Récupère les données du serveur et met à jour l'affichage HTML
         async function chargerHistorique() {
@@ -202,7 +202,7 @@
     
         // Boucle de rafraîchissement automatique en arrière-plan toutes les 60 secondes
         setInterval(chargerHistorique, 60000);
-</script>
+    </script>
 
 </body>
 </html>

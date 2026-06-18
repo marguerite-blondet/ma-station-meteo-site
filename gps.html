@@ -194,7 +194,7 @@
 
             // Récupère les 5 derniers index en partant de la fin (les plus récents)
             const tailleMin = Math.min(dataLng.length, dataLat.length, dataAlt.length);
-            const limite Relevés = 5;
+            const limiteReleves = 5;
             
             // On boucle à l'envers pour afficher le plus récent en premier
             for (let i = 1; i <= Math.min(tailleMin, limiteRelevés); i++) {
@@ -235,7 +235,7 @@
 
     // Rafraîchissement automatique toutes les 60 secondes
     setInterval(chargerHistorique, 60000);
-</script>
+    </script>
 
 </body>
 </html>

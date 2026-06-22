@@ -34,25 +34,25 @@ Sur chaque page de capteurs vous pouvez retrouver les 5 dernières données en t
 
 
 -- URLs des données en temps réels
-* Temperature         : https://station-meteo1.onrender.com/api/meteo/historique/temperature
-* Humidite            : https://station-meteo1.onrender.com/api/meteo/historique/humidite
-* Luminiosité         : https://station-meteo1.onrender.com/api/meteo/historique/luminosite 
-* Pression            : https://station-meteo1.onrender.com/api/meteo/historique/pression
-* Vitesse du vent     : https://station-meteo1.onrender.com/api/meteo/historique/vitesse_m_s 
-* Direction du vent   : https://station-meteo1.onrender.com/api/meteo/historique/dirVent 
-* Angle du vent       : https://station-meteo1.onrender.com/api/meteo/historique/angleVent 
-* Présence de pluie   : https://station-meteo1.onrender.com/api/meteo/historique/pluie_mm 
-* Longitude           : https://station-meteo1.onrender.com/api/meteo/historique/lng 
-* Latitude            : https://station-meteo1.onrender.com/api/meteo/historique/latitude 
-* Altitude            : https://station-meteo1.onrender.com/api/meteo/historique/altitude
+* Temperature         : https://station-meteo1.onrender.com/api/meteo/historique/temperature  
+* Humidite            : https://station-meteo1.onrender.com/api/meteo/historique/humidite  
+* Luminiosité         : https://station-meteo1.onrender.com/api/meteo/historique/luminosite  
+* Pression            : https://station-meteo1.onrender.com/api/meteo/historique/pression  
+* Vitesse du vent     : https://station-meteo1.onrender.com/api/meteo/historique/vitesse_m_s   
+* Direction du vent   : https://station-meteo1.onrender.com/api/meteo/historique/dirVent   
+* Angle du vent       : https://station-meteo1.onrender.com/api/meteo/historique/angleVent   
+* Présence de pluie   : https://station-meteo1.onrender.com/api/meteo/historique/pluie_mm  
+* Longitude           : https://station-meteo1.onrender.com/api/meteo/historique/lng  
+* Latitude            : https://station-meteo1.onrender.com/api/meteo/historique/latitude  
+* Altitude            : https://station-meteo1.onrender.com/api/meteo/historique/altitude  
 
 
 -- URLs des graphiques
-* Temperature        : https://station-meteo1.onrender.com/ui/#!/3?view=fullscreen 
-* Humidite           : https://station-meteo1.onrender.com/ui/#!/0?view=fullscreen 
-* Luminosite         : https://station-meteo1.onrender.com/ui/#!/2?view=fullscreen 
-* Pression           : https://station-meteo1.onrender.com/ui/#!/1?view=fullscreen 
-* Vitesse du vent    : https://station-meteo1.onrender.com/ui/#!/4?view=fullscreen 
+* Temperature        : https://station-meteo1.onrender.com/ui/#!/3?view=fullscreen   
+* Humidite           : https://station-meteo1.onrender.com/ui/#!/0?view=fullscreen   
+* Luminosite         : https://station-meteo1.onrender.com/ui/#!/2?view=fullscreen   
+* Pression           : https://station-meteo1.onrender.com/ui/#!/1?view=fullscreen   
+* Vitesse du vent    : https://station-meteo1.onrender.com/ui/#!/4?view=fullscreen   
 
   
 -- Où retrouver le site ?  

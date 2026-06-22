@@ -374,9 +374,11 @@
                 const extraireDerniereValeur = (tableau) => {
                     if(!tableau || tableau.length === 0) return "--";
                     const derniereMesure = tableau[tableau.length - 1];
-                    let valeurBrute = derniereMesure.valeur !== undefined ? derniereMesure.valeur : (derniereMesure.value || derniereMesure.temperature || derniereMesure.pression || derniereMesure.humidite || derniereMesure.luminosite || derniereMesure.vitesse || derniereMesure.angle || derniereMesure.dir || derniereMesure.pluie || derniereMesure.latitude || derniereMesure.longitude || derniereMesure.lng || derniereMesure.alt || derniereMesure.altitude);
-                    return valeurBrute !== undefined ? valeurBrute : "--";    
-                }; // CORRIGÉ : L'accolade fermante manquante est remise ici.
+                    if (derniereMesure[propriete] !== undefined) return derniereMesure[propriete];
+                    if (derniereMesure.valeur !== undefined) return derniereMesure.valeur;
+                    if (derniereMesure.value !== undefined) return derniereMesure.value;
+                    return "--";  
+                }; 
 
                 document.getElementById("valeur-temp").textContent = extraireDerniereValeur(dataTemp);
                 document.getElementById("valeur-pression").textContent = extraireDerniereValeur(dataPression);

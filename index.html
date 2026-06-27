@@ -366,7 +366,7 @@
         const requetePluie = fetch(URLS.pluie).then(res => res.json());
         const requeteLat = fetch(URLS.latitude).then(res => res.json());
         const requeteLong = fetch(URLS.longitude).then(res => res.json());
-        const requeteAlt = fetch(URLS.altitude).then(res => res.json()); // AJOUTÉ : La requête manquante !
+        const requeteAlt = fetch(URLS.altitude).then(res => res.json()); 
 
         Promise.all([requeteTemp, requetePression, requeteHumidite, requeteLuminosite, requeteVitesse, requeteAngle, requeteDirection, requetePluie, requeteLat, requeteLong, requeteAlt])
             .then(([dataTemp, dataPression, dataHumidite, dataLuminosite, dataVitesse, dataAngle, dataDirection, dataPluie, dataLat, dataLong, dataAlt]) => {

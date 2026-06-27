@@ -1,7 +1,7 @@
 Meteo Xplorer - Tableau de bord  
   
 Version -- Juin 2026  
-Autheur -- Marguerite BLONDET  
+Auteur  -- Marguerite BLONDET  
 Projet  -- D2iP02 : Habib TALL, Jawaher TALL, Rémi TESSE, Clémentine TRANNOY, William SOUCHARD, Marguerite BLONDET  
   
   
